@@ -6,7 +6,6 @@ no warnings 'experimental';
 
 use File::Slurper 'read_text';
 use List::Util 'first';
-use Data::Show;
 
 use lib ('lib');
 use ExamLib::Parser 'parse_exam_file', 'get_questions';
