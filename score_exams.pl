@@ -5,11 +5,7 @@ use warnings;
 no warnings 'experimental';
 
 use File::Slurper 'read_text';
-use File::Basename;
-use Data::Show;
 use List::Util 'first';
-use Lingua::StopWords qw( getStopWords );
-
 
 use lib ('lib');
 use ExamLib::Parser 'parse_exam_file', 'get_questions';
@@ -20,6 +16,7 @@ if (@files == 0) {
   die "No input files specified\n\n";
 }
 
+# Load and parse the master exam file
 my $master_filename = shift @files;
 my $master_file = read_text($master_filename);
 my $master_exam = parse_exam_file($master_file);
@@ -27,23 +24,27 @@ my $master_exam = parse_exam_file($master_file);
 my @master_questions = get_questions($master_exam);
 my $num_questions = @master_questions;
 
+# Print some statistics about the master file
 my $divider = "________________________________________________________________________________\n\n";
 
 print "Master File: $master_filename\n";
 print "Number of questions: $num_questions\n";
-
 print $divider;
 
+# Loop through each solution
 for my $file (@files) {
   print $file . "\n";
 
+  # Load and parse the student file
   my $exam_file = read_text($file);
   my $exam = parse_exam_file($exam_file);
   my @questions = get_questions($exam);
   
+  # Test statistics
   my $num_correct = 0;
   my $num_answered = 0;
 
+  # Loop through master questions
   for my $master_question (@master_questions) {
     my $master_question_text = $master_question->{'question_text'}->{'text'};
     my $master_question_number = $master_question->{'question_text'}->{'question_number'};
@@ -51,7 +52,6 @@ for my $file (@files) {
     # Try to find the question in the student file
     my $student_question = first { $_->{'question_text'}->{'text'} eq $master_question_text } @questions or do{
       print "Missing Question: $master_question_text";
-      #show $exam;
       next;
     };
 

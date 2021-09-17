@@ -5,10 +5,10 @@ use warnings;
 
 use Exporter 'import';
 use Regexp::Grammars; # Grammars Module
-use Data::Show;
 
 our @EXPORT_OK = ('parse_exam_file', 'get_blocks', 'get_questions');
 
+# Uses the Regexp::Grammars module to parse a raw exam file into a operable form.
 sub parse_exam_file {
     my ($raw_content) = @_;
 
@@ -69,11 +69,13 @@ sub parse_exam_file {
     }
 }
 
+# Get a list of blocks from a parsed exam file
 sub get_blocks {
   my ($exam) = @_;
   return @{%{$exam}{'exam'}->{'block'}};
 }
 
+# Get a list of question hashes from a parsed exam file
 sub get_questions {
   my ($exam) = @_;
   my @blocks = get_blocks($exam);
@@ -82,4 +84,4 @@ sub get_questions {
   my @questions = map { ($_->{'question'}) ? $_->{'question'} : ()} @blocks;
 }
 
-1;
+1; # Magic true value

@@ -10,11 +10,11 @@ use ExamLib::Parser 'get_blocks', 'get_questions';
 
 our @EXPORT_OK = ('generate_random_exam');
 
+# Generate a randomized empty exam file from a parsed master exam file
 sub generate_random_exam {
     my ($exam) = @_;
-    my %exam_hash = %{$exam};
 
-    my $frontmatter = $exam_hash{'exam'}->{'frontmatter'}[0];
+    my $frontmatter = %{$exam}{'exam'}->{'frontmatter'}[0]; # Get the frontmatter from the master file
     
     my @blocks = get_blocks($exam);
     my @questions = get_questions($exam);
@@ -43,4 +43,4 @@ sub generate_random_exam {
     return $exam_file;
 }
 
-1;
+1; # Magic true value
