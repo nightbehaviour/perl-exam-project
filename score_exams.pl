@@ -6,10 +6,12 @@ no warnings 'experimental';
 
 use File::Slurper 'read_text';
 use List::Util 'first';
+use Data::Show;
 
 use lib ('lib');
 use ExamLib::Parser 'parse_exam_file', 'get_questions';
 use ExamLib::Util 'get_timestamp', 'write_text';
+use ExamLib::Language 'normalize', 'compare_edit_distance';
 
 my @files = @ARGV;
 if (@files == 0) {
@@ -50,7 +52,7 @@ for my $file (@files) {
     my $master_question_number = $master_question->{'question_text'}->{'question_number'};
 
     # Try to find the question in the student file
-    my $student_question = first { $_->{'question_text'}->{'text'} eq $master_question_text } @questions or do{
+    my $student_question = first { compare_edit_distance($master_question_text, $_->{'question_text'}->{'text'}) } @questions or do{
       print "Missing Question: $master_question_text";
       next;
     };
@@ -66,9 +68,15 @@ for my $file (@files) {
       my $master_answer_text = $answer->{'text'};
 
       # Try to find the answer option in the student's file
-      my $student_answer = first { $_->{'text'} eq $master_answer_text} @student_answers or do {
-        print "Missing answer in question $master_question_number: $master_answer_text";
-        next;
+      # First we try to find an exact match
+      my $student_answer;
+      $student_answer = first { $master_answer_text eq $_->{'text'} } @student_answers or do {
+        # Try to find a fuzzy match.
+        $student_answer = first { compare_edit_distance($master_answer_text, $_->{'text'}) } @student_answers or do {
+          print "Missing answer in question $master_question_number: $master_answer_text";
+          next;
+        };
+        print "Warning: Fuzzy matching answers in question ". $master_question_number . " This may lead to inexact scoring.\n";
       };
 
       # Evaluate checkboxes on master and student files

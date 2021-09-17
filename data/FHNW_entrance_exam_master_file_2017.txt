@@ -182,7 +182,7 @@ ________________________________________________________________________________
 
 16. The 'while' loop in Perl...
 
-    [X] ...iterates until its condition is false
+    [X] ...iterates until its condition is false at the start of an iteration
     [ ] ...iterates until its condition is true at the start of an iteration
     [ ] ...iterates until its condition becomes false anywhere within its block
     [ ] ...iterates until its condition becomes true anywhere within its block
@@ -295,10 +295,10 @@ ________________________________________________________________________________
     but which will also accept three or more arguments?
 
     [X] sub two_or_more ($flag, @data)           {...}
-    [ ] sub two_or_more ($data, $flag)           {...}
+    [ ] sub two_or_more ($flag, $data)           {...}
     [ ] sub two_or_more ($flag, $data = @extras) {...}
     [ ] sub two_or_more ($flag, ...)             {...}
-    [ ] sub two_or_more (@flags, @data_set)      {...}
+    [ ] sub two_or_more (@flag, @data)           {...}
 
 ________________________________________________________________________________
 
@@ -310,6 +310,12 @@ ________________________________________________________________________________
     [ ] ...it will return 'undef'
     [ ] ...it will throw an exception after executing its final statement
     [ ] ...it will never return and will continue to execute forever
+
+    [ ] ...it will never return and will continue to execute forever
+    [X] ...it return the value the last expression it actually evaluates
+    [ ] ...it will throw an exception after executing its final statement
+    [ ] ...it return the value the final statement in its definition
+    [ ] ...it return 'undef'
 
 ________________________________________________________________________________
 

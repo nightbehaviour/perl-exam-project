@@ -177,8 +177,7 @@ ________________________________________________________________________________
     [ ] ...iterates until its condition is true at the start of an iteration
     [ ] ...iterates until its condition becomes false anywhere within its block
     [X] ...iterates until its condition is false at the start of an iteration
-
-
+    
 ________________________________________________________________________________
 
 17. The keywords for the Perl switch statement are:

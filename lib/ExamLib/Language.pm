@@ -1,1 +1,58 @@
-my @stop_words = ("if", "me","has","him","nor","theirs","here","yourself","from","we're","other","for","where","which","themselves","why's","hasn't","as","why","all","hers","what's","she's","don't","where's","we'd","how","how's","she","then","you'd","ours","but","he'd","down","it's","those","these","wasn't","am","between","you're","more","they","been","were","myself","was","he's","weren't","cannot","hadn't","you","his","their","our","with","them","up","i'm","once","when's","had","until","because","of","i'd","my","who","few","who's","that","under","very","yours","same","so","her","during","both","is","she'd","some","ought","be","this","are","above","below","that's","doing","there's","further","she'll","there","couldn't","to","a","own","your","aren't","after","ourselves","shan't","they'd","in","and","let's","over","before","not","wouldn't","haven't","against","they'll","doesn't","than","no","when","itself","they're","isn't","himself","at","into","through","yourselves","about","he","we'll","most","they've","an","won't","you'll","herself","again","should","each","being","or","would","does","it","have","shouldn't","only","you've","whom","any","by","i've","do","here's","could","off","while","out","we've","its","didn't","i'll","mustn't","the","i","can't","on","too","he'll","such","did","we","what","having");
+package ExamLib::Language;
+
+use v5.34;
+use warnings;
+
+use Exporter 'import';
+use Lingua::StopWords 'getStopWords';
+use Text::Levenshtein 'distance';
+use Data::Show;
+
+our @EXPORT_OK = ('normalize', 'compare_edit_distance');
+
+my $lingua_stopwords = getStopWords('en');
+
+# Remove some stopwords from the list because they would cause problems with matching
+my @stopwords_blacklist = ("not", "only", "isn't", "doesn't");
+delete %{$lingua_stopwords}{ @stopwords_blacklist };
+
+my @stopwords = grep { $lingua_stopwords->{$_} } (keys %$lingua_stopwords);
+
+my ($stopwords_regex) = map qr/(?:$_)/, join "|", map qr/\b\Q$_\E\b/, @stopwords;
+
+# Normalize a string
+sub normalize {
+  my ($str) = @_;
+
+  # Convert to lowercase
+  $str = lc $str;
+
+  # Remove stopwords
+  $str =~ s/$stopwords_regex//g;
+
+  # Trim whitespace from start and end
+  $str =~ s/^\s+|\s+$//g;
+
+  # Replace sequences of whitespace with single space
+  $str =~ s/\s+/ /g;
+
+  return $str
+}
+
+# Returns true if the levenshtein distance between two normalized strings is smaller than 10% of the normalized strings length.
+sub compare_edit_distance {
+  my ($str_a, $str_b) = @_;
+
+  # Normalize both input strings
+  my $str_a_normalized = normalize($str_a);
+  my $str_b_normalized = normalize($str_b);
+
+  # Calculate max edit distance
+  my $max_edit_distance = int((length $str_a_normalized) / 10);
+
+  my $edit_distance = distance($str_a_normalized, $str_b_normalized);
+
+  return $edit_distance <= $max_edit_distance;
+}
+
+1; # Magic true value

@@ -1,6 +1,6 @@
 package ExamLib::Parser;
 
-use v5.32;
+use v5.34;
 use warnings;
 
 use Exporter 'import';
