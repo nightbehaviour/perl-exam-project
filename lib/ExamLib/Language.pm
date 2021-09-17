@@ -6,7 +6,6 @@ use warnings;
 use Exporter 'import';
 use Lingua::StopWords 'getStopWords';
 use Text::Levenshtein 'distance';
-use Data::Show;
 
 our @EXPORT_OK = ('normalize', 'compare_edit_distance');
 
